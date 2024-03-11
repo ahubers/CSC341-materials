@@ -1,0 +1,15 @@
+Describe a TM M which has input x and writes |x|² in binary.
+
+For example:
+ – 00 would 100
+ – 0000 would write 10000
+
+Answer:
+
+Define M as a 3-tape Turing Machine with the following behavior:
+- M takes in input x and uses the solution to HW6 #4 to encode the length in binary
+  on a work tape (call it work tape A) and the output tape.
+- Now, it adds the encoded length to itself and writes that to the output tape.
+  It can add itself by following the gradeschool algorithm.
+- Repeat the step above for every character in the input.
+- 
