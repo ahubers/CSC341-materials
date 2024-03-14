@@ -9,10 +9,8 @@ module NatStringIso where
 --------------------------------------------------------------------------------
 -- This file is me playing around with a formal proof in Agda that ℕ and 0-1
 -- strings are bijective (as you did informally in Lab 8B). In particular,
--- a few groups found a bijection that uses the binary encoding of the number, which
--- I was unable to falsify, which I have implemented. If I were smarter/less-lazy,
--- I could actually try to prove this encoding is a bijection.
-
+-- a few groups found a bijection that felt suspicious but I was unable to falsify.
+-- So I have implemented it here. 
 --------------------------------------------------------------------------------
 -- Binary representation of naturals.
 
@@ -72,17 +70,40 @@ decode b = go b 0
     go (b I) n = 2 ^ n + go b (n + 1)
 
 --------------------------------------------------------------------------------
--- Proof that encoding is half of an isomorphism.
---
--- Because of leading zeros, we know that encode ∘ decode ≠ ID.
--- However, we should have the other direction fine.
-
-iso₁ : ∀ (n : ℕ) → decode (encode n) ≡ n
-iso₁ zero = refl
-iso₁ (suc n) = {!iso₁ n!} -- <---- Need to now reason about incrementation, but I'm lazy.
-
---------------------------------------------------------------------------------
 -- Student encoding.
 
+-- Student solution is to take the binary encoding, prepend it with a 1,
+-- and decode that to ℕ.
+
+prepend-I : Bin → Bin
+prepend-I ⟨⟩ = ⟨⟩ I
+prepend-I (b O) = (prepend-I b) O
+prepend-I (b I) = (prepend-I b) I
+
+-- Student solution.
 f : Bin → ℕ
-f b = decode (_I b)
+f b = decode (prepend-I b)
+
+unpend-I : Bin → Bin
+unpend-I ⟨⟩ = ⟨⟩
+unpend-I (⟨⟩ I) = ⟨⟩
+unpend-I (b O) = (unpend-I b) O
+unpend-I (b I) = (unpend-I b) I
+
+g : ℕ → Bin
+g n = unpend-I (encode n)
+
+--------------------------------------------------------------------------------
+-- If the encoding works, this should be a bijection.
+
+iso₁ : ∀ (n : ℕ) → f (g n) ≡ (n + 2)
+iso₁ zero = refl
+iso₁ (suc n) = {!!}
+
+iso₂ : ∀ (b : Bin) → g (f b) ≡ b
+iso₂ ⟨⟩ = refl
+iso₂ (b O) = {!!}
+iso₂ (b I) = {!!}
+
+
+
